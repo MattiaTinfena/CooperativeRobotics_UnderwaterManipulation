@@ -38,8 +38,8 @@ classdef TaskVehicle < Task
 
     methods
         function updateReference(obj, robot)
-            [~, lin] = CartError(robot.wTgv , robot.wTv); % I compute the cartesian error between two frames projected on w
-            disp(lin);
+            [~,lin] = CartError(robot.wTgv , robot.wTv); % I compute the cartesian error between two frames projected on w
+            %disp(lin);
             obj.xdotbar = - 0.2 * [lin];
             % limit the requested velocities...
             obj.xdotbar = Saturate(obj.xdotbar, 0.2);

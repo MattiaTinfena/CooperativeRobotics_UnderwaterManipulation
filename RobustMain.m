@@ -7,7 +7,7 @@ clc; clear; close all;
 
 % Simulation parameters
 dt       = 0.005;
-endTime  = 50;
+endTime  = 100;
 % Initialize robot model and simulator
 robotModel = UvmsModel();          
 sim = UvmsSim(dt, robotModel, endTime);
@@ -17,7 +17,8 @@ unity = UnityInterface("127.0.0.1");
 % Define tasks
 task_vehicle = TaskVehicle();       
 task_tool    = TaskTool();
-task_set = {task_tool, task_vehicle};
+task_vehicle_orientation = TaskVehicleOrientation();
+task_set = {task_vehicle_orientation, task_vehicle};
 
 % Define actions and add to ActionManager
 actionManager = ActionManager();
@@ -26,7 +27,7 @@ actionManager.addAction(task_set);  % action 1
 % Define desired positions and orientations (world frame)
 w_arm_goal_position = [12.2025, 37.3748, -39.8860]';
 w_arm_goal_orientation = [0, pi, pi/2];
-w_vehicle_goal_position = [10.5, 37.5, -39.5]';
+w_vehicle_goal_position = [10.5, 37.5, -30]';
 w_vehicle_goal_orientation = [0, 0, 0];
 
 % Set goals in the robot model
