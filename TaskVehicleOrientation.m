@@ -21,8 +21,7 @@ classdef TaskVehicleOrientation < Task
 
             [ang,~] = CartError(robot.wTgv , robot.wTv);
             errorz = acos(ang(3)/norm(ang));
-            errorz = min((180 - errorz), errorz);
-
+            errorz = min((pi - errorz), errorz);
             obj.A = zeros(3);
             obj.A(1,1) = IncreasingBellShapedFunction(0.1,0.2,0,1,abs(errorz));
             obj.A(2,2) = IncreasingBellShapedFunction(0.1,0.2,0,1,abs(errorz));
