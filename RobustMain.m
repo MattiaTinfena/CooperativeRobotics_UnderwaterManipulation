@@ -6,7 +6,7 @@ addpath('./robust_robot');
 clc; clear; close all;
 % Simulation parameters
 dt       = 0.005;
-endTime  = 100;
+endTime  = 50;
 % Initialize robot model and simulator
 robotModel = UvmsModel();          
 sim = UvmsSim(dt, robotModel, endTime);
@@ -16,9 +16,9 @@ unity = UnityInterface("127.0.0.1");
 % Define task
 task_vehicle_position = TaskVehiclePosition();       
 task_tool    = TaskTool();
-task_vehicle_orientation = TaskVehicleOrientation();
+task_vehicle_hor_att = TaskVehicleHorAtt();
 task_vehicle_altitude = TaskVehicleAltitude();
-task_set = {task_vehicle_orientation, task_vehicle_position};
+task_set = {task_vehicle_altitude, task_vehicle_hor_att, task_vehicle_position};
 
 % Define actions and add to ActionManager
 actionManager = ActionManager();
@@ -28,7 +28,7 @@ actionManager.addAction(task_set);  % action 1
 w_arm_goal_position = [12.2025, 37.3748, -39.8860]';
 w_arm_goal_orientation = [0, pi, pi/2];
 %w_vehicle_goal_position = [10.5   37.5  -38]';
-w_vehicle_goal_position = [13.2025   38.3748  -35]';
+w_vehicle_goal_position = [13.2025   38.3748  -39.8860]';
 w_vehicle_goal_orientation = [0, 0, 0];
 
 % Set goals in the robot model

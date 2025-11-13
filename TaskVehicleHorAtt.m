@@ -1,12 +1,13 @@
-classdef TaskVehicleOrientation < Task   
+classdef TaskVehicleHorAtt < Task   
     properties
 
     end
 
     methods
         function updateReference(obj, robot)
-            rho = cross([0; 0; 1], robot.wTv(1:3,3));
-            theta = asin(norm(rho));
+            rho1 = cross([0; 0; 1], robot.wTv(1:3,3));
+            rho2 = dot([0; 0; 1], robot.wTv(1:3,3));
+            theta = atan2(norm(rho1), rho2);
             obj.xdotbar = 0.2 * (0.1 - theta);
             % limit the requested velocities...
             obj.xdotbar = Saturate(obj.xdotbar, 0.2);
