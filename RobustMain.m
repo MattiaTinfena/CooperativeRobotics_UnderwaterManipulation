@@ -6,7 +6,7 @@ addpath('./robust_robot');
 clc; clear; close all;
 % Simulation parameters
 dt       = 0.005;
-endTime  = 50;
+endTime  = 150;
 % Initialize robot model and simulator
 robotModel = UvmsModel();          
 sim = UvmsSim(dt, robotModel, endTime);
@@ -25,15 +25,15 @@ landing = {task_zero_altitude, task_vehicle_hor_att, task_vehicle_position};
 
 % Define actions and add to ActionManager
 actionManager = ActionManager();
-actionManager.addAction(safe_navigation);  % action 1
-actionManager.addAction(landing);  % action 2
+actionManager.addAction(safe_navigation, "SN");  % action 1
+actionManager.addAction(landing, "L");  % action 2
 
+actionManager.setCurrentAction("SN");
 
 % Define desired positions and orientations (world frame)
 w_arm_goal_position = [12.2025, 37.3748, -39.8860]';
 w_arm_goal_orientation = [0, pi, pi/2];
-w_vehicle_goal_position = [10.5   37.5  -38]';
-%w_vehicle_goal_position = [13.2025   38.3748  -39.8860]';
+w_vehicle_goal_position = [50   -12.5  -33]';
 w_vehicle_goal_orientation = [0, 0, 0];
 
 % Set goals in the robot model
@@ -60,11 +60,17 @@ for step = 1:sim.maxSteps
     logger.update(sim.time, sim.loopCounter);
 
     % 6. Optional debug prints
+
     if mod(sim.loopCounter, round(1 / sim.dt)) == 0
         fprintf('t = %.2f s\n', sim.time);
         fprintf('alt = %.2f m\n', robotModel.altitude);
     end
 
+    [~,lin] = CartError(robotModel.wTgv , robotModel.wTv); % I compute the cartesian error between two frames projected on w
+    if norm(lin) < 0.1 && actionManager.currentAction == 1 %valuta se mettere la norma solo di x e y (nel caso in cui z non sia raggiungibile)
+        actionManager.setCurrentAction("L");
+    end
+    
     % 7. Optional real-time slowdown
     SlowdownToRealtime(dt);
 end
