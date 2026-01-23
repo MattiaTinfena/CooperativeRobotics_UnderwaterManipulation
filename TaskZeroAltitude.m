@@ -1,4 +1,4 @@
-classdef TaskZeroAltitude < Task   
+classdef TaskZeroAltitude < Task
     properties
 
     end
@@ -6,7 +6,7 @@ classdef TaskZeroAltitude < Task
     methods
         function updateReference(obj, robot)
             if size(robot.altitude) == 1
-                obj.xdotbar = 0.2 * robot.altitude;
+                obj.xdotbar = 0.2 * (robot.altitude - 0.01); %0.01 minimum altitude is needed to avoid compenetration with the sea floor
             else
                 obj.xdotbar = 0;
             end
@@ -20,7 +20,7 @@ classdef TaskZeroAltitude < Task
             Jt_v = n * [-(wRv) zeros(3)];
             obj.J = [Jt_a Jt_v];
         end
-        
+
         function updateActivation(obj, robot)
             obj.A = 1;
         end
