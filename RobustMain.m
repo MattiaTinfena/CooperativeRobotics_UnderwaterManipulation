@@ -20,18 +20,21 @@ task_vehicle_hor_att = TaskVehicleHorAtt();
 task_vehicle_altitude = TaskVehicleAltitude();
 task_vehicle_orientation = TaskVehicleOrientation();
 task_zero_altitude = TaskZeroAltitude();
+task_not_moving = TaskNotMoving();
 
-safe_navigation = ["TVA", "TVHA", "TVP"];
+safe_waypoint_navigation_action = ["TVA", "TVHA", "TVP"];
 landing = ["TVO","TZA", "TVHA", "TVP"];
+fixed_based_manipulation_action = ["TNM", "TT"];
 
-task_list = {task_vehicle_position, task_tool, task_vehicle_hor_att, task_vehicle_altitude, task_zero_altitude, task_vehicle_orientation};
-task_list_name = ["TVP", "TT", "TVHA", "TVA", "TZA", "TVO"];
+task_list = {task_vehicle_position, task_tool, task_vehicle_hor_att, task_vehicle_altitude, task_zero_altitude, task_vehicle_orientation, task_not_moving};
+task_list_name = ["TVP", "TT", "TVHA", "TVA", "TZA", "TVO", "TNM"];
 
 % Define actions and add to ActionManager
 actionManager = ActionManager();
 actionManager.setTaskList(task_list, task_list_name);
-actionManager.addAction(safe_navigation, "SN");  % action 1
+actionManager.addAction(safe_waypoint_navigation_action, "SN");  % action 1
 actionManager.addAction(landing, "L");  % action 2
+actionManager.addAction(fixed_based_manipulation_action, "M")
 
 actionManager.setCurrentAction("SN", sim.time);
 
@@ -69,6 +72,10 @@ for step = 1:sim.maxSteps
     [~,lin] = CartError(robotModel.wTgv , robotModel.wTv); % I compute the cartesian error between two frames projected on w
     if norm(lin) < 0.1 && actionManager.current_action == 1 %valuta se mettere la norma solo di x e y (nel caso in cui z non sia raggiungibile)
         actionManager.setCurrentAction("L", sim.time);
+    end
+
+    if norm(robotModel.altitude) < 0.02 && actionManager.current_action == 2
+        actionManager.setCurrentAction("M", sim.time);
     end
 
     if mod(sim.loopCounter, round(1 / sim.dt)) == 0

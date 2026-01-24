@@ -6,11 +6,10 @@ classdef TaskZeroAltitude < Task
     methods
         function updateReference(obj, robot)
             if size(robot.altitude) == 1
-                obj.xdotbar = 0.2 * (robot.altitude - 0.01); %0.01 minimum altitude is needed to avoid compenetration with the sea floor
+                obj.xdotbar = 0.2 * (robot.altitude - 0.01); %0.01 minimum altitude is needed to avoid compenetration with the seafloor
             else
                 obj.xdotbar = 0;
             end
-            % limit the requested velocities...
             obj.xdotbar = Saturate(obj.xdotbar, 0.2);
         end
         function updateJacobian(obj, robot)
