@@ -15,25 +15,26 @@ unity = UnityInterface("127.0.0.1");
 
 % Define task
 task_vehicle_position = TaskVehiclePosition();
-task_tool    = TaskTool();
+task_tool = TaskTool();
 task_vehicle_hor_att = TaskVehicleHorAtt();
 task_vehicle_altitude = TaskVehicleAltitude();
 task_vehicle_orientation = TaskVehicleOrientation();
 task_zero_altitude = TaskZeroAltitude();
 task_not_moving = TaskNotMoving();
+task_max_nodule_dist = TaskMaxNoduleDist();
 
 safe_waypoint_navigation_action = ["TVA", "TVHA", "TVP"];
-landing = ["TVO","TZA", "TVHA", "TVP"];
+landing_action = ["TVHA", "TMD", "TVO","TZA"];
 fixed_based_manipulation_action = ["TNM", "TT"];
 
-task_list = {task_vehicle_position, task_tool, task_vehicle_hor_att, task_vehicle_altitude, task_zero_altitude, task_vehicle_orientation, task_not_moving};
-task_list_name = ["TVP", "TT", "TVHA", "TVA", "TZA", "TVO", "TNM"];
+task_list = {task_vehicle_position, task_tool, task_vehicle_hor_att, task_vehicle_altitude, task_zero_altitude, task_vehicle_orientation, task_not_moving, task_max_nodule_dist};
+task_list_name = ["TVP", "TT", "TVHA", "TVA", "TZA", "TVO", "TNM", "TMD"];
 
 % Define actions and add to ActionManager
 actionManager = ActionManager();
 actionManager.setTaskList(task_list, task_list_name);
 actionManager.addAction(safe_waypoint_navigation_action, "SN");  % action 1
-actionManager.addAction(landing, "L");  % action 2
+actionManager.addAction(landing_action, "L");  % action 2
 actionManager.addAction(fixed_based_manipulation_action, "M")
 
 actionManager.setCurrentAction("SN", sim.time);
@@ -41,6 +42,7 @@ actionManager.setCurrentAction("SN", sim.time);
 % Define desired positions and orientations (world frame)
 w_arm_goal_position = [12.2025, 37.3748, -39.8860]';
 w_arm_goal_orientation = [0, pi, pi/2];
+% w_vehicle_goal_position = [9 30 -33]'; % for stressing the system
 w_vehicle_goal_position = [10.5 37.5 -38]';
 w_vehicle_goal_orientation = [0, -0.06, 0.5];
 
