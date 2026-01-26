@@ -1,18 +1,18 @@
-classdef TaskVehiclePosition < Task   
+classdef TaskVehiclePosition < Task
     properties
 
     end
 
     % 1: x(c) = d = (Ogoal - Ovehicle)
     % 2: I want my d to go to 0
-    % 3: Identify the time behaviour of 
-    
+    % 3: Identify the time behaviour of
+
     %   d -> d_dot = - v_v/w
 
     % 4: - d_dot = v_v/w (independent from vehicle = dep. from vehicle)
     % 5: I want to express the equation in matrix form:
 
-    %       d_dot = v_J_d/w * y_dot, where 
+    %       d_dot = v_J_d/w * y_dot, where
 
     %           v_J_d/w = [-I[3x3] 0[3x3]]
 
@@ -38,8 +38,8 @@ classdef TaskVehiclePosition < Task
 
     methods
         function updateReference(obj, robot)
+
             [~,lin] = CartError(robot.wTgv , robot.wTv); % I compute the cartesian error between two frames projected on w
-            %disp(lin);
             obj.xdotbar = - 0.2 * lin;
             % limit the requested velocities...
             obj.xdotbar = Saturate(obj.xdotbar, 0.2);
@@ -50,7 +50,7 @@ classdef TaskVehiclePosition < Task
             Jt_v = [(-wRv) zeros(3)];
             obj.J = [Jt_a Jt_v];
         end
-        
+
         function updateActivation(obj, robot)
             obj.A = eye(3);
         end

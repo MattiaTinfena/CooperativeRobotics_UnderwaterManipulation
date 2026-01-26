@@ -42,8 +42,8 @@ actionManager.setCurrentAction("SN", sim.time);
 % Define desired positions and orientations (world frame)
 w_arm_goal_position = [12.2025, 37.3748, -39.8860]';
 w_arm_goal_orientation = [0, pi, pi/2];
-% w_vehicle_goal_position = [9 30 -33]'; % for stressing the system
-w_vehicle_goal_position = [10.5 37.5 -38]';
+w_vehicle_goal_position = [9 30 -33]'; % for stressing the system
+% w_vehicle_goal_position = [10.5 37.5 -38]';
 w_vehicle_goal_orientation = [0, -0.06, 0.5];
 
 % Set goals in the robot model
