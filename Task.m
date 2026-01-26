@@ -4,6 +4,7 @@ classdef Task < handle
         xdotbar = [] % reference task velocity
         J = []       % task Jacobian
         A = []       % task internal activation function
+        ap
     end
 
     methods (Abstract)
