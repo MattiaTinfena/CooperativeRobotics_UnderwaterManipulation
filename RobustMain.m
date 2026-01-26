@@ -6,7 +6,7 @@ addpath('./robust_robot');
 clc; clear; close all;
 % Simulation parameters
 dt       = 0.005;
-endTime  = 180;
+endTime  = 300;
 % Initialize robot model and simulator
 robotModel = UvmsModel();
 sim = UvmsSim(dt, robotModel, endTime);
@@ -39,12 +39,14 @@ actionManager.addAction(fixed_based_manipulation_action, "M")
 
 actionManager.setCurrentAction("SN", sim.time);
 
+initial_time = sim.time;
 % Define desired positions and orientations (world frame)
 w_arm_goal_position = [12.2025, 37.3748, -39.8860]';
 w_arm_goal_orientation = [0, pi, pi/2];
-w_vehicle_goal_position = [9 30 -33]'; % for stressing the system
-% w_vehicle_goal_position = [10.5 37.5 -38]';
+w_vehicle_goal_position = [10.5 37.5 -38]';
 w_vehicle_goal_orientation = [0, -0.06, 0.5];
+
+% w_vehicle_goal_position = [9 30 -33]'; % to stress the system
 
 % Set goals in the robot model
 robotModel.setGoal(w_arm_goal_position, w_arm_goal_orientation, w_vehicle_goal_position, w_vehicle_goal_orientation);
@@ -57,34 +59,55 @@ for step = 1:sim.maxSteps
     % 1. Receive altitude from Unity
     robotModel.altitude = unity.receiveAltitude(robotModel);
 
+    prev_pos = robotModel.wTv;
+
     % 2. Compute control commands for current action
     [v_nu, q_dot] = actionManager.computeICAT(robotModel, sim.time);
 
-    % 3. Step the simulator (integrate velocities)
+    % 4. Step the simulator (integrate velocities)
     sim.step(v_nu, q_dot);
 
-    % 4. Send updated state to Unity
-    unity.send(robotModel);
+    % 3. Action switching
 
-    % 5. Logging
-    % logger.update(sim.time, sim.loopCounter);
+    act_pos = robotModel.wTv;
 
-    % 6. Optional debug prints
+    [ang_dist,lin_dist] = CartError(act_pos , prev_pos); % I compute the cartesian error between two frames projected on w
+
+    % Simple watchdog to evaluate if the robot is stacked beacuse the goal is not reachable
+    if norm(ang_dist) > 0.0002 || norm(lin_dist) > 0.0002
+        initial_time = sim.time;
+    end
 
     [~,lin] = CartError(robotModel.wTgv , robotModel.wTv); % I compute the cartesian error between two frames projected on w
-    if norm(lin) < 0.1 && actionManager.current_action == 1 %valuta se mettere la norma solo di x e y (nel caso in cui z non sia raggiungibile)
+    delta_time = sim.time - initial_time;
+
+    if (norm(lin) < 0.1 || delta_time > 5) && actionManager.current_action == 1  %valuta se mettere la norma solo di x e y (nel caso in cui z non sia raggiungibile)
         actionManager.setCurrentAction("L", sim.time);
+        initial_time = sim.time;
     end
 
     if norm(robotModel.altitude) < 0.02 && actionManager.current_action == 2
         actionManager.setCurrentAction("M", sim.time);
     end
 
+
+
+
+    % 5. Send updated state to Unity
+    unity.send(robotModel);
+
+    % 6. Logging
+    % logger.update(sim.time, sim.loopCounter);
+
+    % 7. Optional debug prints
+
     if mod(sim.loopCounter, round(1 / sim.dt)) == 0
         fprintf('t = %.2f s\n', sim.time);
         fprintf('alt = %.2f m\n', robotModel.altitude);
+        disp(delta_time);
     end
-    % 7. Optional real-time slowdown
+
+    % 8. Optional real-time slowdown
     SlowdownToRealtime(dt);
 end
 
