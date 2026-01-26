@@ -6,7 +6,7 @@ addpath('./robust_robot');
 clc; clear; close all;
 % Simulation parameters
 dt       = 0.005;
-endTime  = 50;
+endTime  = 80;
 % Initialize robot model and simulator
 robotModel = UvmsModel();
 sim = UvmsSim(dt, robotModel, endTime);
@@ -46,10 +46,11 @@ initial_time = sim.time;
 % Define desired positions and orientations (world frame)
 w_arm_goal_position = [12.2025, 37.3748, -39.8860]';
 w_arm_goal_orientation = [0, pi, pi/2];
-% w_vehicle_goal_position = [10.5 37.5 -38]';
+w_vehicle_goal_position = [10.5 37.5 -38]';
 w_vehicle_goal_orientation = [0, -0.06, 0.5];
 
-w_vehicle_goal_position = [9 30 -33]'; % to stress the system
+% w_vehicle_goal_position = [50 11 -33]'; % to stress the minimum altitude task
+% w_vehicle_goal_position = [10.5 40 -38]'; % to stress the distance and the alignment from nodule
 
 % Set goals in the robot model
 robotModel.setGoal(w_arm_goal_position, w_arm_goal_orientation, w_vehicle_goal_position, w_vehicle_goal_orientation);
@@ -118,17 +119,7 @@ for step = 1:sim.maxSteps
 end
 
 % Display plots
-
-% Esempio 1: Plotta solo stato del robot (braccio e veicolo)
-% logger.plotAll();
-
-% Esempio 2: Plotta robot + Dettagli dell'azione 1 ("SN"), Task 1 e 3
-% (Assicurati che gli indici task esistano nell'azione "SN")
-% logger.plotAll(1, [1 3]);
-
-% Esempio 3: Plotta robot + Dettagli dell'azione 2 ("L"), Task 2
-logger.plotAll(1, [2]);
-
+logger.plotAll();
 
 % Clean up Unity interface
 delete(unity);
