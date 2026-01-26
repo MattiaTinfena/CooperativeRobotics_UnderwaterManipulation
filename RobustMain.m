@@ -6,7 +6,7 @@ addpath('./robust_robot');
 clc; clear; close all;
 % Simulation parameters
 dt       = 0.005;
-endTime  = 200;
+endTime  = 50;
 % Initialize robot model and simulator
 robotModel = UvmsModel();
 sim = UvmsSim(dt, robotModel, endTime);
@@ -55,7 +55,7 @@ w_vehicle_goal_position = [9 30 -33]'; % to stress the system
 robotModel.setGoal(w_arm_goal_position, w_arm_goal_orientation, w_vehicle_goal_position, w_vehicle_goal_orientation);
 
 % Initialize the logger
-% logger = SimulationLogger(ceil(endTime/dt)+1, robotModel, actionManager);
+logger = SimulationLogger(ceil(endTime/dt)+1, robotModel, actionManager);
 
 % Main simulation loop
 for step = 1:sim.maxSteps
@@ -86,11 +86,11 @@ for step = 1:sim.maxSteps
 
     delta_time = sim.time - initial_time;
 
-    if ((norm(lin_error) < 0.01 && norm(ang_error) < 0.01) || delta_time > 7) && actionManager.current_action == 1
+    if ((norm(lin_error) < 0.1 && norm(ang_error) < 0.1) || delta_time > 7) && actionManager.current_action == 1
         actionManager.setCurrentAction("P", sim.time);
         initial_time = sim.time;
 
-    elseif ((norm(nodule_dist(1:2)) < 1.7 && norm(task_align_to_nodule.nodule_misalignment) < 0.01 ) || delta_time > 7) && actionManager.current_action == 2
+    elseif ((norm(nodule_dist(1:2)) < 1.7 && norm(task_align_to_nodule.nodule_misalignment) < 0.1 ) || delta_time > 7) && actionManager.current_action == 2
         actionManager.setCurrentAction("L", sim.time);
         initial_time = sim.time;
     end
@@ -103,7 +103,7 @@ for step = 1:sim.maxSteps
     unity.send(robotModel);
 
     % 6. Logging
-    % logger.update(sim.time, sim.loopCounter);
+    logger.update(sim.time, sim.loopCounter);
 
     % 7. Optional debug prints
 
@@ -119,7 +119,16 @@ end
 
 % Display plots
 
+% Esempio 1: Plotta solo stato del robot (braccio e veicolo)
 % logger.plotAll();
+
+% Esempio 2: Plotta robot + Dettagli dell'azione 1 ("SN"), Task 1 e 3
+% (Assicurati che gli indici task esistano nell'azione "SN")
+% logger.plotAll(1, [1 3]);
+
+% Esempio 3: Plotta robot + Dettagli dell'azione 2 ("L"), Task 2
+logger.plotAll(1, [2]);
+
 
 % Clean up Unity interface
 delete(unity);
