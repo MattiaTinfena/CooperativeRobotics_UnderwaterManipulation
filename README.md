@@ -1,2 +1,2 @@
-# Cooperative_ass1
-Repo for the 1st assignment of cooperative robotics
+# CooperativeRobotics_UnderwaterManipulation
+![Simulation](./gifs/underwater.gif)
