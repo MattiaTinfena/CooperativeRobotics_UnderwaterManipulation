@@ -15,8 +15,10 @@ classdef TaskVehicleOrientation < Task
         function updateJacobian(obj, robot)
 
             Jt_a  = zeros(3,7);
+
             wRv = robot.wTv(1:3, 1:3);
-            Jt_v = [zeros(3), (-wRv)];
+            Jt_v = [zeros(3) (-wRv)];
+
             obj.J = [Jt_a Jt_v];
         end
 

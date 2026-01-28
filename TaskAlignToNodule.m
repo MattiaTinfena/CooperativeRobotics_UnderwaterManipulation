@@ -18,24 +18,24 @@ classdef TaskAlignToNodule < Task
 
             [ang, ~] = CartError(wTv_des, robot.wTv);
 
-            obj.xdotbar = - 0.2 * ang;
+            obj.xdotbar = - 0.2 * ang(3);
             obj.xdotbar = Saturate(obj.xdotbar, 0.2);
 
             obj.nodule_misalignment = ang;
         end
 
         function updateJacobian(obj, robot)
-
-            Jt_a  = zeros(3,7);
+            n = [0 0 1];
+            Jt_a  = n * zeros(3,7);
 
             wRv = robot.wTv(1:3, 1:3);
-            Jt_v = [zeros(3) (-wRv)];
+            Jt_v = n * [zeros(3) (-wRv)];
 
             obj.J = [Jt_a Jt_v];
         end
 
         function updateActivation(obj, robot)
-            obj.A = eye(3);
+            obj.A = 1;
         end
     end
 end
