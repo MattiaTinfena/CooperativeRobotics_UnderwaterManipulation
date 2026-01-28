@@ -25,7 +25,7 @@ task_not_moving = TaskNotMoving();
 task_max_nodule_dist = TaskMaxNoduleDist();
 
 safe_waypoint_navigation_action = ["TVA", "TVHA", "TVP", "TVO"];
-positioning_action = ["TVHA", "TMD", "TATN"];
+positioning_action = ["TVHA", "TVA", "TMD", "TATN"];
 landing_action = ["TVHA", "TATN","TZA"];
 fixed_based_manipulation_action = ["TNM", "TT"];
 
