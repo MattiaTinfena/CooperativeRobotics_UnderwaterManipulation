@@ -17,8 +17,7 @@ classdef TaskVehicleHorAtt < Task
 
             n = obj.rho / robot.theta;
             Jt_a  = n' * zeros(3,7);
-            wRv = robot.wTv(1:3, 1:3);
-            Jt_v = n' * [zeros(3) (wRv)];
+            Jt_v = n' * [zeros(3) eye(3)];
             obj.J = [Jt_a Jt_v];
         end
 
