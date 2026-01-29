@@ -26,11 +26,11 @@ task_max_nodule_dist = TaskMaxNoduleDist();
 
 safe_waypoint_navigation_action = ["TVA", "TVHA", "TVP", "TVO"];
 positioning_action = ["TVA", "TVHA", "TMD", "TATN"];
-landing_action = ["TVHA", "TATN","TZA"];
+landing_action = ["TVHA", "TZA", "TATN"];
 fixed_based_manipulation_action = ["TNM", "TT"];
 
-task_list = {task_vehicle_position, task_tool, task_vehicle_hor_att, task_vehicle_altitude, task_zero_altitude, task_vehicle_orientation, task_not_moving, task_max_nodule_dist, task_align_to_nodule};
-task_list_name = ["TVP", "TT", "TVHA", "TVA", "TZA", "TVO", "TNM", "TMD", "TATN"];
+task_list = {task_vehicle_altitude, task_vehicle_hor_att, task_not_moving, task_zero_altitude, task_max_nodule_dist, task_align_to_nodule, task_vehicle_position, task_vehicle_orientation, task_tool };
+task_list_name = ["TVA", "TVHA", "TNM", "TZA", "TMD", "TATN", "TVP", "TVO", "TT"];
 
 % Define actions and add to ActionManager
 actionManager = ActionManager();

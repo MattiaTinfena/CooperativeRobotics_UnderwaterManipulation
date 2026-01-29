@@ -47,7 +47,11 @@ classdef ActionManager < handle
                 if(length(obj.ap_instructions) == length(obj.tasks))
                     for i = 1:length(obj.tasks)
                         if(obj.ap_instructions(i) == 1)
-                            obj.tasks{i}.ap = IncreasingBellShapedFunction(obj.initial_time, obj.initial_time +2, 0, 1, time);
+                            if obj.tasks{i}.instant_activation
+                                obj.tasks{i}.ap = 1;
+                            else
+                                obj.tasks{i}.ap = IncreasingBellShapedFunction(obj.initial_time, obj.initial_time +2, 0, 1, time);
+                            end
                         elseif(obj.ap_instructions(i) == -1)
                             obj.tasks{i}.ap = DecreasingBellShapedFunction(obj.initial_time, obj.initial_time +2, 0, 1, time);
                         else
@@ -115,21 +119,27 @@ classdef ActionManager < handle
 
             act_tags  = obj.actions_tag{obj.current_action};
             prev_tags = obj.actions_tag{obj.previous_action};
-            all_tags = unique([prev_tags, act_tags], 'stable');
+            % 1. Identifica tutti i tag coinvolti nella transizione
+            union_tags = union(act_tags, prev_tags);
 
+            % 2. FILTRO CRUCIALE: Crea all_tags seguendo l'ordine di 'all_task_names'
+            % ismember(A, B) con 'stable' non basta qui, vogliamo l'ordine di obj.all_task_names
+            mask_involved = ismember(obj.all_task_names, union_tags);
+            all_tags = obj.all_task_names(mask_involved); % Questi sono i tag ordinati per priorità
 
+            % 3. Ora recupera gli oggetti task corrispondenti
             [tf_all, idx_all] = ismember(all_tags, obj.all_task_names);
             obj.tasks = obj.all_task_list(idx_all(tf_all));
+
+            % 4. Calcola le istruzioni di attivazione basandoti sul nuovo all_tags
             in_act  = ismember(all_tags, act_tags);
             in_prev = ismember(all_tags, prev_tags);
 
             obj.ap_instructions = zeros(1, numel(all_tags));
+            obj.ap_instructions( in_act &  in_prev) =  0;  % Resta attivo
+            obj.ap_instructions( in_act & ~in_prev) = +1;  % Deve attivarsi
+            obj.ap_instructions(~in_act &  in_prev) = -1;  % Deve spegnersi
 
-            obj.ap_instructions( in_act &  in_prev) =  0;
-            obj.ap_instructions( in_act & ~in_prev) = +1;
-            obj.ap_instructions(~in_act &  in_prev) = -1;
-
-            obj.ap_instructions = obj.ap_instructions(tf_all);
         end
     end
 end

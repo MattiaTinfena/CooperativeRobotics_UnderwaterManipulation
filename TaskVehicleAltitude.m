@@ -1,4 +1,4 @@
-classdef TaskVehicleAltitude < Task   
+classdef TaskVehicleAltitude < Task
     properties
 
     end
@@ -6,7 +6,7 @@ classdef TaskVehicleAltitude < Task
     methods
         function updateReference(obj, robot)
             if size(robot.altitude) == 1
-                obj.xdotbar = -0.2 * max(0, (1.5 - robot.altitude));
+                obj.xdotbar = -0.2 * max(0, (1 - robot.altitude));
             else
                 obj.xdotbar = 0;
             end
@@ -20,7 +20,7 @@ classdef TaskVehicleAltitude < Task
             Jt_v = n * [-(wRv) zeros(3)];
             obj.J = [Jt_a Jt_v];
         end
-        
+
         function updateActivation(obj, robot)
 
             if size(robot.altitude) == 1
@@ -28,7 +28,7 @@ classdef TaskVehicleAltitude < Task
             else
                 obj.A = 0;
             end
-            
+
         end
     end
 end

@@ -84,8 +84,7 @@ classdef SimulationLogger < handle
             obj.v_nu(:, loop) = obj.robot.v_nu;
             obj.altitude(loop) = norm(obj.robot.altitude);
 
-            rho = cross([0; 0; 1], obj.robot.wTv(1:3,3));
-            obj.hor_att(loop) = asin(norm(rho));
+            obj.hor_att(loop) = obj.robot.theta;
 
             [obj.orientation(:, loop), ~] = CartError(obj.robot.wTgv , obj.robot.wTv);
             [~,lin] = CartError(obj.robot.wTg, obj.robot.wTv);
@@ -261,7 +260,7 @@ classdef SimulationLogger < handle
                 };
 
             for k = 1:obj.total_tasks
-                % 1. Trova i dati del task
+
                 target_task = obj.action_mng.all_task_list{k};
                 act_idx = -1; tsk_idx = -1;
                 found = false;
@@ -280,7 +279,6 @@ classdef SimulationLogger < handle
                     continue;
                 end
 
-                % 2. Prepara dati standard (Primi due grafici)
                 raw_xdot = squeeze(obj.xdotbar_task(act_idx, tsk_idx, 1:obj.curr_loop));
                 raw_A    = squeeze(obj.activation_task(act_idx, tsk_idx, 1:obj.curr_loop));
                 raw_ap   = squeeze(obj.priority_task(act_idx, tsk_idx, 1:obj.curr_loop));
@@ -291,7 +289,6 @@ classdef SimulationLogger < handle
                 data_ap   = obj.fillWithZeros(raw_ap);
                 data_prod = obj.fillWithZeros(raw_prod);
 
-                % 3. Crea Figura con TabGroup
                 f = figure(100 + k);
                 clf;
                 task_name = string(obj.action_mng.all_task_names(k));

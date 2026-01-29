@@ -47,6 +47,7 @@ classdef UvmsModel < handle
         goalPosition% desired position of tool in world
         wRgv        % desired vehicle orientation in world
         vehicleGoalPosition % desired vehicle position in world
+        theta
     end
 
     methods
@@ -70,7 +71,7 @@ classdef UvmsModel < handle
 
             % Initialize default state
             obj.q      = [-0.0031 0 0.0128 -1.2460 0.0137 0.0853 -pi/2]';
-            obj.eta    = [10.5 35 -38 -pi/3 pi/3 pi/2]';
+            obj.eta    =[10.5 35 -38 0 pi/4 pi/2]';
             % obj.eta    = [50 -12.5 -33 -pi/3 pi/3 pi/2]'; % To stress the minimum altitude task and the horizontal attitude task
 
             % Default limits

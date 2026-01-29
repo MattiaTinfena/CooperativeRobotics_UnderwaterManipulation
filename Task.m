@@ -5,6 +5,7 @@ classdef Task < handle
         J = []       % task Jacobian
         A = []       % task internal activation function
         ap
+        instant_activation
     end
 
     methods (Abstract)
